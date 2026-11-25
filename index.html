@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>HumanPhys: A Human-Centric Physical-World Perception Benchmark for Real-World Visual Reasoning</title>
+
+<meta name="description" content="HumanPhys is a human-centric benchmark and training corpus for real-world physical perception, spanning 13 sub-tasks over six dimensions: spatial state, kinematics, event, deformation, illumination and camera pose.">
+
+<!-- 图标库:外网 CDN。内网离线时图标不显示,文字与版面不受影响 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+<link rel="icon" href="assets/images/favicon.svg">
+<link rel="stylesheet" href="style.css?v=20261014-142451">
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ① 首屏
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="robot">
+    <div class="container">
+        <h1 class="title">
+            <span class="highlight">HumanPhys</span>: A Human-Centric<br>
+            Physical-World Perception Benchmark<br>
+            for Real-World Visual Reasoning
+        </h1>
+
+        <p class="publication-authors">
+            <span class="author-name">Yiming Zhang</span><sup>1,2,&lowast;</sup>,
+            <span class="author-name">Enzhi Zhou</span><sup>2,&lowast;</sup>,
+            <span class="author-name">Junan Lin</span><sup>2</sup>,
+            <span class="author-name">Dulan Zhou</span><sup>2</sup>,
+            <span class="author-name">Weiqiang Wang</span><sup>2</sup>,
+            <span class="author-name">Yuge Huang</span><sup>2,&dagger;</sup>,
+            <span class="author-name">Jian Liu</span><sup>2,&dagger;</sup><br>
+            <span class="author-affiliation"><sup>1</sup>Nanyang Technological University, Singapore</span>&nbsp;&nbsp;
+            <span class="author-affiliation"><sup>2</sup>Ant Group, Hangzhou, China</span><br>
+            <span class="author-note"><sup>&lowast;</sup>Equal contribution&nbsp;&nbsp;&nbsp;<sup>&dagger;</sup>Corresponding authors</span>
+        </p>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         链接按钮 —— arXiv 已可跳转;Dataset / Code 尚未发布,标 coming soon
+
+         ★ 拿到 Dataset 或 Code 地址后,把对应的 <span class="btn-soon"> … </span>
+           整块换成下面这样即可(照抄 arXiv 那个的写法):
+
+           <a href="https://实际地址" target="_blank" rel="noopener">
+               <span class="icon"><i class="fas fa-database"></i></span>
+               <span>Dataset</span>
+           </a>
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="publication-links">
+        <span class="link-block">
+            <a href="https://arxiv.org/abs/2610.14679" target="_blank" rel="noopener">
+                <span class="icon"><i class="ai ai-arxiv"></i></span> arXiv
+            </a>
+        </span>
+        <span class="link-block">
+            <span class="btn-soon">
+                <span class="icon"><i class="fas fa-database"></i></span>
+                <span>Dataset</span>
+                <span class="soon-tag">coming soon</span>
+            </span>
+        </span>
+        <span class="link-block">
+            <span class="btn-soon">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+                <span class="soon-tag">coming soon</span>
+            </span>
+        </span>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ② Figure 1 — radar + checkpoint ablation
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="logo-section">
+    <div class="container">
+        <div class="image-container">
+            <img src="assets/images/hero-radar.png" alt="HumanPhys radar and checkpoint ablation" class="full-width-image">
+        </div>
+        <p class="figure-caption">
+            <strong>Left:</strong> radar of the eight MLLMs on HumanPhys, with one axis for each sub-task,
+            grouped into the six taxonomy categories of the overview figure; the two proprietary models are dashed
+            (numerical scores in the leaderboard below).
+            <strong>Right:</strong> checkpoint ablation of fine-tuning on HumanPhys and complementary spatial data
+            across ten benchmarks, with Qwen3-VL-4B-Instruct dashed as reference.
+        </p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ③ 摘要
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="abstract-section">
+    <div class="container">
+        <h2>Abstract</h2>
+        <p>
+            We introduce HumanPhys, a human-centric benchmark for real-world physical perception, and a
+            training corpus emitted by the same pipeline. Each question targets a physically grounded
+            quantity related to people, including depth, inter-person distance, gaze angle, displacement,
+            velocity, heading-step trajectory, blink count, and contact-deformation strength. The rendered
+            probes additionally test illumination inference from body and face cues and camera ego-motion,
+            both with and without a person in the frame. All labels are derived programmatically from sensor
+            calibration, source metadata, or renderer state, rather than written by annotators or produced by
+            estimators on the benchmark frames. HumanPhys systematically probes six dimensions of
+            human-centric physical perception: spatial state, kinematics, blink events, deformation,
+            illumination, and camera pose. To the best of our knowledge, no existing MLLM
+            benchmark-and-training corpus jointly supervises this set of human-centered physical quantities
+            under direct metadata- or renderer-derived labels. The six dimensions appear only partially
+            dissociable across the tested MLLMs. We benchmark a range of open- and closed-source MLLMs on
+            HumanPhys and find that all six capability dimensions remain challenging for current models. We
+            hope HumanPhys will support future research on multimodal systems that perceive and reason about
+            people in the physical world.
+        </p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ④ Figure 2 — taxonomy overview
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="taxonomy-section">
+    <div class="container">
+        <h2>Overview</h2>
+        <div class="image-container">
+            <img src="assets/images/taxonomy.png" alt="HumanPhys taxonomy" class="full-width-image">
+        </div>
+        <p class="figure-caption">
+            <strong>Overview of the HumanPhys taxonomy.</strong> Six dimensions, thirteen sub-tasks.
+            The separation is not a topic list but an operational decomposition of the role the body plays:
+            a <em>rigid target</em> localized in the world frame (spatial state, kinematics); a
+            <em>non-rigid, living target</em> showing transient events and contact response (blink, deformation);
+            a <em>photometric probe</em> whose shading reveals a hidden light source (illumination); and a
+            <em>reference for the observer</em> when ego-motion is measured with a person in frame (camera pose).
+        </p>
+
+        <div class="stat-strip">
+            <div class="stat"><span class="stat-num">13</span><span class="stat-label">sub-tasks</span></div>
+            <div class="stat"><span class="stat-num">8</span><span class="stat-label">data sources</span></div>
+            <div class="stat"><span class="stat-num">2,500</span><span class="stat-label">eval questions</span></div>
+            <div class="stat"><span class="stat-num">385,702</span><span class="stat-label">training pool</span></div>
+            <div class="stat"><span class="stat-num">6</span><span class="stat-label">dimensions</span></div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑤ 排行榜 — 主结果表(13 子任务 × 8 模型)
+     data-column-index: 1=Model 2=Overall 3..15 = 13 个子任务列
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="leaderboard-section">
+    <div class="container">
+        <h2 class="leaderboard-title">Leaderboard</h2>
+        <p class="description">
+            Click on column headers to sort. Scores of eight MLLMs on the 13 sub-tasks, grouped by the six
+            taxonomy dimensions. <strong>Overall</strong> is the question-weighted composite
+            &sum;<sub>k</sub> n<sub>k</sub>s&#772;<sub>k</sub> / 2500 over the full item bank
+            (n<sub>k</sub>=200; 100 for <em>Deform</em>), scoring an unparseable answer 0 and keeping it in the
+            denominator. The 13 sub-task columns average only parseable answers, so they are diagnostic rather
+            than additive. Abbreviations: Dist = Distance, Disp = Displacement, Traj = Trajectory,
+            LS = light-shadow, CP = camera-pose.
+        </p>
+
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="rank-header">Rank</th>
+                    <th rowspan="2" class="method-header sortable" data-column-index="1">Method<span class="sort-indicator"></span></th>
+                    <th rowspan="2" class="avg-header sortable" data-column-index="2">Overall<span class="sort-indicator"></span></th>
+                    <th colspan="4">Spatial state</th>
+                    <th colspan="3">Kinematics</th>
+                    <th colspan="1">Event</th>
+                    <th colspan="1">Deform.</th>
+                    <th colspan="2">Illumination</th>
+                    <th colspan="2">Camera pose</th>
+                </tr>
+                <tr>
+                    <th class="task-header sortable" data-column-index="3">Depth<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="4">Dist<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="5">Count<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="6">Gaze<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="7">Disp<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="8">Vel<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="9">Traj<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="10">Blink<span class="sort-indicator"></span></th>
+                    <th class="task-header sortable" data-column-index="11">Deform<span class="sort-indicator"></span></th>
+                    <th class="task-header wide sortable" data-column-index="12">LS-Head<span class="sort-indicator"></span></th>
+                    <th class="task-header wide sortable" data-column-index="13">LS-Body<span class="sort-indicator"></span></th>
+                    <th class="task-header wide sortable" data-column-index="14">CP-Room<span class="sort-indicator"></span></th>
+                    <th class="task-header wide sortable" data-column-index="15">CP-Human<span class="sort-indicator"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ── Closed-source ── -->
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GPT-5.6-Sol</a><span class="model-tag tag-closed">closed</span></td>
+                    <td>46.94</td><td>37.15</td><td>29.90</td><td>70.05</td><td>79.35</td>
+                    <td>20.35</td><td>40.50</td><td>64.72</td><td>87.95</td><td>46.00</td>
+                    <td>27.51</td><td>57.48</td><td>30.55</td><td>18.15</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Gemini-3.5-Flash</a><span class="model-tag tag-closed">closed</span></td>
+                    <td>45.61</td><td>32.90</td><td>38.05</td><td>69.60</td><td>77.05</td>
+                    <td>21.15</td><td>38.85</td><td>65.28</td><td>71.60</td><td>47.00</td>
+                    <td>30.39</td><td>60.39</td><td>27.36</td><td>13.91</td>
+                </tr>
+                <!-- ── Open-source ── -->
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct" target="_blank" rel="noopener">Qwen3-VL-4B-Instruct</a><span class="model-tag tag-open">open</span></td>
+                    <td>27.27</td><td>29.00</td><td>38.05</td><td>36.65</td><td>14.50</td>
+                    <td>17.40</td><td>24.95</td><td>63.48</td><td>30.85</td><td>38.00</td>
+                    <td>24.82</td><td>54.62</td><td>5.36</td><td>2.43</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct" target="_blank" rel="noopener">Qwen2.5-VL-7B-Instruct</a><span class="model-tag tag-open">open</span></td>
+                    <td>19.74</td><td>29.25</td><td>17.40</td><td>28.80</td><td>13.50</td>
+                    <td>8.40</td><td>16.15</td><td>58.29</td><td>25.20</td><td>27.00</td>
+                    <td>23.94</td><td>52.48</td><td>6.44</td><td>2.56</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="https://arxiv.org/abs/2504.01805" target="_blank" rel="noopener">SpaceR</a><span class="model-tag tag-open">open</span></td>
+                    <td>26.14</td><td>30.90</td><td>25.95</td><td>26.15</td><td>3.50</td>
+                    <td>15.85</td><td>33.40</td><td>67.07</td><td>26.85</td><td>24.00</td>
+                    <td>23.78</td><td>51.54</td><td>8.44</td><td>1.68</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">SpatialEvo</a><span class="model-tag tag-open">open</span></td>
+                    <td>25.21</td><td>32.10</td><td>29.85</td><td>35.70</td><td>7.45</td>
+                    <td>28.30</td><td>25.90</td><td>67.85</td><td>5.30</td><td>23.00</td>
+                    <td>20.27</td><td>50.07</td><td>5.60</td><td>2.86</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Spatial-SSRL-7B</a><span class="model-tag tag-open">open</span></td>
+                    <td>20.43</td><td>20.55</td><td>20.30</td><td>32.20</td><td>34.30</td>
+                    <td>1.40</td><td>7.60</td><td>55.14</td><td>34.65</td><td>29.00</td>
+                    <td>26.20</td><td>53.97</td><td>9.17</td><td>2.57</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">ViLaSR</a><span class="model-tag tag-open">open</span></td>
+                    <td>27.75</td><td>23.45</td><td>27.15</td><td>38.45</td><td>7.05</td>
+                    <td>22.00</td><td>50.55</td><td>66.51</td><td>27.55</td><td>21.00</td>
+                    <td>15.97</td><td>48.58</td><td>6.95</td><td>3.20</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 class="sub-table-title">Reference baselines</h3>
+        <table class="baseline-table">
+            <thead>
+                <tr>
+                    <th class="method-header">Baseline</th>
+                    <th class="avg-header">Overall</th>
+                    <th class="task-header">Depth</th>
+                    <th class="task-header">Dist</th>
+                    <th class="task-header">Count</th>
+                    <th class="task-header">Gaze</th>
+                    <th class="task-header">Disp</th>
+                    <th class="task-header">Vel</th>
+                    <th class="task-header">Traj</th>
+                    <th class="task-header">Blink</th>
+                    <th class="task-header">Deform</th>
+                    <th class="task-header wide">LS-Head</th>
+                    <th class="task-header wide">LS-Body</th>
+                    <th class="task-header wide">CP-Room</th>
+                    <th class="task-header wide">CP-Human</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="model-name">Random</td>
+                    <td>18.60</td><td>7.20</td><td>8.30</td><td>23.40</td><td>28.20</td>
+                    <td>5.80</td><td>12.20</td><td>37.80</td><td>22.00</td><td>26.20</td>
+                    <td>13.40</td><td>48.10</td><td>6.10</td><td>2.80</td>
+                </tr>
+                <tr>
+                    <td class="model-name">Text Only</td>
+                    <td>18.03</td><td>20.60</td><td>24.00</td><td>0.00</td><td>32.55</td>
+                    <td>0.00</td><td>14.80</td><td>54.03</td><td>0.00</td><td>28.00</td>
+                    <td>24.58</td><td>54.19</td><td>4.62</td><td>2.32</td>
+                </tr>
+                <tr>
+                    <td class="model-name">Human <span class="model-tag tag-human">indicative</span></td>
+                    <td>48.30</td><td>25.20</td><td>52.00</td><td>79.20</td><td>60.40</td>
+                    <td>36.50</td><td>30.30</td><td>63.50</td><td>87.40</td><td>36.10</td>
+                    <td>50.60</td><td>70.10</td><td>24.90</td><td>12.20</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="table-note">
+            <em>Human</em> is indicative only: ten colleagues each answered an availability-selected,
+            non-uniform &asymp;40% subset, so we draw no statistical conclusion from it.
+            <em>Random</em> is a uniform random baseline over the full question bank; <em>Text Only</em> answers
+            from the question text alone, without any visual input.
+        </p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑥ 对比 — benchmark comparison
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="comparison-section">
+    <div class="container">
+        <h2>Comparison</h2>
+        <!-- ★ 屏幕自适应关键:
+             ① table-layout:fixed 让列宽完全由下面 <colgroup> 的百分比决定,内容再长也撑不破
+             ② <wbr> 给长单词标出「可以在这里换行」的位置,窄屏时才不会出现半个词溢出  -->
+        <table class="compare-table">
+            <colgroup>
+                <col class="c-bench">
+                <col class="c-hc">
+                <col class="c-flag"><col class="c-flag"><col class="c-flag">
+                <col class="c-flag"><col class="c-flag"><col class="c-flag">
+                <col class="c-train">
+            </colgroup>
+            <thead>
+                <!-- 每个长表头都有「完整版 / 窄屏缩写版」两份,由 CSS 按屏宽切换,
+                     避免手机上把 IMAGE 这类词硬断成 "IMAG E" -->
+                <tr>
+                    <th rowspan="2"><span class="lbl-full">Bench<wbr>mark</span><span class="lbl-short">Bench</span></th>
+                    <th rowspan="2"><span class="lbl-full">Human-<br>Centric</span><span class="lbl-short">Human<br>Cent.</span></th>
+                    <th colspan="2"><span class="lbl-full">Input Type</span><span class="lbl-short">Input</span></th>
+                    <th colspan="2">Source</th>
+                    <th colspan="2"><span class="lbl-full">Task <wbr>Taxonomy</span><span class="lbl-short">Task<br>Taxon.</span></th>
+                    <th rowspan="2"><span class="lbl-full">Train<br>Data<br>Ava.</span><span class="lbl-short">Train<br>Data</span></th>
+                </tr>
+                <tr>
+                    <th><span class="lbl-full">Image</span><span class="lbl-short">Img</span></th>
+                    <th><span class="lbl-full">Video</span><span class="lbl-short">Vid</span></th>
+                    <th>Real</th>
+                    <th><span class="lbl-full">Simu<wbr>lation</span><span class="lbl-short">Sim</span></th>
+                    <th><span class="lbl-full">Static</span><span class="lbl-short">Stat</span></th>
+                    <th><span class="lbl-full">Dyna<wbr>mic</span><span class="lbl-short">Dyn</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bench-name">VSI-Bench</td>
+                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">STI-Bench</td>
+                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">3DSRBench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">BLINK</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">ViewSpatial</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">SPARBench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">MMSI-Bench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">WMABench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">SpaceR</td>
+                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">SpatialScore</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">HumanMoveVQA</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td class="bench-name"><strong>HumanPhys</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="figure-caption">
+            <strong>Human-Centric:</strong> humans are the targets of perception.
+            <strong>Input Type:</strong> accepted modalities; “Video” means temporally ordered sampled frames
+            derived from source clips. <strong>Source:</strong> provenance of the visual data.
+            <strong>Task Taxonomy:</strong> static or dynamic queried target.
+            <strong>Train Data Ava.:</strong> whether a training corpus is released.
+            For HumanMoveVQA all questions are video-level multiple choice about human motion, so Static is
+            marked &times;, and <em>Train Data Ava.</em> denotes the authors' own training split rather than a
+            separately released corpus.
+        </p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑦ 任务定义 —— 方案 B:左侧粘性目录 + 右侧内容
+     ★ 左侧跳转用浏览器原生锚点(<a href="#td-xxx">),JS 只负责切换高亮
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="taskdef-section">
+    <div class="container">
+        <h2>Task Definition</h2>
+        <p class="section-lead">
+            The 13 sub-tasks fall into two groups with complementary roles. <strong>Group I</strong> covers
+            <em>measured</em> human-centered physical cues in real-world video; <strong>Group II</strong> provides
+            <em>controlled probes</em> for phenomena that cannot be reliably labeled in wild footage.
+            In short, Group I tests whether a model can recover physical cues from real people, while Group II
+            isolates cues whose ground truth is otherwise difficult to obtain.
+        </p>
+
+        <div class="taskdef-wrap">
+
+            <!-- 左侧目录:滚动时粘住,当前维度自动高亮 -->
+            <nav class="taskdef-nav" aria-label="Task dimensions">
+                <div class="nav-title">On this page</div>
+
+                <div class="nav-group">Group I &middot; Real-world measured cues</div>
+                <a href="#td-spatial">Spatial State <span class="n">4</span></a>
+                <a href="#td-kinematics">Kinematics <span class="n">3</span></a>
+                <a href="#td-event">Event <span class="n">1</span></a>
+
+                <div class="nav-group">Group II &middot; Controlled rendered probes</div>
+                <a href="#td-deformation">Deformation <span class="n">1</span></a>
+                <a href="#td-illumination">Illumination <span class="n">2</span></a>
+                <a href="#td-camerapose">Camera Pose <span class="n">2</span></a>
+            </nav>
+
+            <!-- 右侧内容:6 个维度分组 -->
+            <div class="taskdef-body">
+
+                <div class="taskdef-block" id="td-spatial">
+                    <h3><span class="dot g1"></span>Spatial State</h3>
+                    <div class="taskdef-item">
+                        <span class="name">Depth</span>
+                        <p class="def">Distance of people to the reference sensor, read directly from calibration metadata.</p>
+                        <p class="ex">&ldquo;How far is the person from the camera?&rdquo;</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">Distance</span>
+                        <p class="def">Pairwise inter-person distance measured at the <em>foot</em> point
+                            (<em>c<sub>x</sub>, c<sub>y</sub>, c<sub>z</sub>&minus;h/2</em>), which reduces the effect of
+                            variation in human height.</p>
+                        <p class="ex">&ldquo;What is the minimum distance between pedestrian 29 and pedestrian 46 in the video?&rdquo;</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">Count</span>
+                        <p class="def">Number of humans satisfying an explicitly stated spatial criterion
+                            (everybody dancing in frame, or inside a labelled walkway ROI).</p>
+                        <p class="ex">&ldquo;How many people are inside the walkway?&rdquo;</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">Gaze</span>
+                        <p class="def">Clockwise image-plane angle <em>atan2(&Delta;y, &Delta;x) + 90&deg;</em> from the
+                            upward image direction to the head-centre&ndash;to&ndash;fixation-point vector. Because this
+                            angle lives in the image plane it is camera-dependent by construction, so we treat it as a
+                            viewpoint-conditioned physical cue.</p>
+                        <p class="ex">&ldquo;What is the gaze angle of the person relative to the upward image direction?&rdquo;</p>
+                    </div>
+                </div>
+
+                <div class="taskdef-block" id="td-kinematics">
+                    <h3><span class="dot g1"></span>Kinematics</h3>
+                    <div class="taskdef-item">
+                        <span class="name">Displacement</span>
+                        <p class="def">Cumulative ground-plane path length
+                            <em>&sum;<sub>i</sub>&radic;(&Delta;x<sub>i</sub><sup>2</sup>+&Delta;y<sub>i</sub><sup>2</sup>)</em>
+                            between the first and last frame of the clip.</p>
+                        <p class="ex">&ldquo;How far did the person move during the clip?&rdquo;</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">Velocity</span>
+                        <p class="def">Displacement divided by the clip's elapsed time, with the sampling interval stated
+                            in the question so the model must bind visual motion to a stated time base.</p>
+                        <p class="ex">&ldquo;What is the average speed of the person?&rdquo;</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">Trajectory</span>
+                        <p class="def">Sequence of heading changes and step lengths as
+                            (<em>turn_deg</em>, <em>distance_m</em>) tuples, with the first step anchored at 0&deg; and
+                            positive turn meaning left. Curved paths are kept by a random forest that triages every
+                            candidate trajectory into straight / curved / abandon.</p>
+                        <p class="ex">&ldquo;Summarize the walking trajectory, including turns made and distances moved.&rdquo;</p>
+                    </div>
+                </div>
+
+                <div class="taskdef-block" id="td-event">
+                    <h3><span class="dot g1"></span>Event</h3>
+                    <div class="taskdef-item">
+                        <span class="name">Blink</span>
+                        <p class="def">Number of discrete eye-blink events in a clip, requiring the model to integrate
+                            evidence across frames instead of reading a single canonical pose. Frames are compressed
+                            (each open-eye run to at most two evenly spaced frames, each closed-eye run to its middle
+                            frame) so that 32 frames span a far longer period.</p>
+                        <p class="ex">&ldquo;How many times did the person blink in this video?&rdquo;</p>
+                    </div>
+                </div>
+
+                <div class="taskdef-block" id="td-deformation">
+                    <h3><span class="dot g2"></span>Deformation</h3>
+                    <div class="taskdef-item">
+                        <span class="name">Deform</span>
+                        <p class="def">A FLAME head deformed by MANO hand contact is rendered as a
+                            <em>2&times;4</em> panel grid (two head-following views &times; four deformation strengths).
+                            Each option's strength &alpha; rescales the measured contact deformation by a Gaussian
+                            influence field; exactly one option (&alpha;=1.0) matches physical reality, while distractors
+                            sample &alpha; &isin; [0, 0.5] &cup; [2, 3] under a deterministic seed, so every option stays
+                            physically legal yet separable from the true contact.</p>
+                        <p class="ex">&ldquo;Which face's deformation best matches physical reality?&rdquo;</p>
+                    </div>
+                </div>
+
+                <div class="taskdef-block" id="td-illumination">
+                    <h3><span class="dot g2"></span>Illumination</h3>
+                    <div class="taskdef-item">
+                        <span class="name">LS-Head</span>
+                        <p class="def">A standing human inside a light stage of 27 point lights on a
+                            <em>3&times;3&times;3</em> lattice; exactly one light is on per frame. The frontal
+                            self-portrait camera gives a subtle facial shading cue, and each walk step is restricted to a
+                            single lattice axis (&plusmn;X, &plusmn;Y or &plusmn;Z by one step) to keep the cue readable.</p>
+                        <p class="ex">&ldquo;Which light position produced this shading on the face?&rdquo;</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">LS-Body</span>
+                        <p class="def">The same lattice walk observed from 8 peripheral wall cameras, where body shading
+                            and cast shadows are far more informative. Runs the <em>fast</em> walk, whose steps may change
+                            up to three lattice axes at once (step lengths 1, &radic;2 or &radic;3). Because cue strength
+                            and step grammar change together, scores are comparable within a variant but not across
+                            variants; we therefore treat the two as separate sub-tasks and caution against cross-variant
+                            comparison.</p>
+                    </div>
+                </div>
+
+                <div class="taskdef-block" id="td-camerapose">
+                    <h3><span class="dot g2"></span>Camera Pose</h3>
+                    <div class="taskdef-item">
+                        <span class="name">CP-Room</span>
+                        <p class="def">A free-flying camera performs a random walk on a collision-checked cubic lattice
+                            (0.20&nbsp;m step) through 84 baked indoor stages. Every frame transition is exactly one
+                            <em>atomic action</em>: a translation along &plusmn;X/&plusmn;Y/&plusmn;Z by 1&ndash;3 steps,
+                            or an in-place yaw/pitch/roll rotation of &plusmn;1&deg;&ndash;&plusmn;30&deg;. This is the
+                            human-free control condition.</p>
+                    </div>
+                    <div class="taskdef-item">
+                        <span class="name">CP-Human</span>
+                        <p class="def">Identical scene family, lattice step, action grammar and scorer, but plants an
+                            SMPL-X human and samples paths that keep the face framed. The CP-Human/CP-Room gap is
+                            therefore a <em>controlled comparison</em> for the effect of human presence on ego-motion
+                            recovery.</p>
+                        <p class="ex">&ldquo;Predict the sequence of camera actions for every subsequent frame.&rdquo;</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑧ 构建流程 + 训练语料分布(两张图并排一行)
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="pipeline-section">
+    <div class="container">
+        <h2>Construction Pipeline</h2>
+
+        <!-- 两张图并排:左 = 流程图,右 = 训练语料分布圆环图 -->
+        <div class="figure-row">
+            <figure class="figure-panel">
+                <img src="assets/images/pipeline.png" alt="HumanPhys construction pipeline" class="full-width-image">
+            </figure>
+            <figure class="figure-panel">
+                <img src="assets/images/statistic.png" alt="Task distribution of the HumanPhys training corpus" class="full-width-image">
+                <figcaption>
+                    <strong>Training corpus distribution.</strong> About 386K samples; distance-related
+                    tasks dominate, with long-tail categories such as Count, Gaze, Trajectory and Deformation.
+                </figcaption>
+            </figure>
+        </div>
+
+        <p><strong>I. Data Collection</strong> &mdash; Aggregate open-source human-centric datasets
+            (JRDB, DECAF, EyeBlink8, VideoAttentionTarget, DanceTrack, UCSD) together with synthetic scenes
+            configured in Blender using assets from ReplicaCAD in Habitat-Sim and BEDLAM.</p>
+        <p><strong>II. Preprocessing</strong> &mdash; Extract metadata (3D bounding boxes, camera parameters,
+            timestamps), construct simulatable scenes, then clean and align.</p>
+        <p><strong>III. QA Generation</strong> &mdash; Multi-engine dispatch routes each sub-task to a dedicated
+            question engine (Depth / Velocity / Distance / &hellip;) that emits QA pairs, with random sampling over
+            coordinate systems (X/Y/Z), Euler angles (Roll/Pitch/Yaw) and the parametric face mesh.</p>
+        <p><strong>IV. Manual Review</strong> &mdash; Because answers come from metadata or renderer state rather
+            than annotators, review only flags rendering artefacts, mis-aligned metadata or ill-posed prompts for
+            regeneration (Keep / Fix / Discard) and <strong>never alters a ground-truth value</strong>.</p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑨ 分析 — CP-Room 错误诊断
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="analysis-section">
+    <div class="container">
+        <h2>Analysis</h2>
+        <p>
+            Where do models actually fail? The 13 sub-task columns show that the six dimensions are only
+            <em>partially dissociable</em>: across the eight models kinematics and illumination correlate at
+            <em>r</em> = &minus;0.18 and spatial state and kinematics at <em>r</em> = 0.35 (mean off-diagonal
+            <em>r</em> = 0.64), and rankings reverse between dimensions. An aggregate score would hide these
+            differences, so we diagnose the largest single failure mode directly.
+        </p>
+
+        <div class="image-container">
+            <img src="assets/images/diagnosis.png" alt="Diagnosis of CP-Room errors for Gemini-3.5-Flash" class="full-width-image">
+        </div>
+        <p class="figure-caption">
+            <strong>Diagnosis of CP-Room errors (Gemini-3.5-Flash, n = 200).</strong>
+            <strong>Left:</strong> per-step gold-vs-predicted axis confusion.
+            <strong>Right:</strong> score-loss waterfall from a perfect mean step-MRA of 1.0 to the actual 0.274.
+        </p>
+
+        <h3>1. Motion type, not magnitude, is the main obstacle</h3>
+        <p>
+            Rotational axes are recovered far more reliably than translational ones (diagonal confusion
+            77%, 64% and 61% for roll, pitch and yaw), while translational motions are frequently confused with
+            rotations &mdash; gold <em>+X</em> is predicted as <em>yaw</em> in 28% of steps. The waterfall
+            attributes 69% of the total loss to choosing the wrong axis or motion type, 22% to sign errors, and
+            only 9% to magnitude errors.
+        </p>
+
+        <h3>2. Existing spatial corpora transfer only weakly</h3>
+        <p>
+            The four checkpoints released for object- and scene-centric spatial reasoning reach
+            20.43&ndash;27.75 overall, 19&ndash;27 points below GPT-5.6-Sol. Human-physical perception is
+            therefore at best weakly induced by existing spatial corpora, which motivates the HumanPhys training
+            pool and the use of SpaceR-151K and SpatialCorpus-331K as complements rather than substitutes.
+        </p>
+
+        <h3>3. Specialisation costs breadth unless data is mixed</h3>
+        <p>
+            Supervised training on the HumanPhys corpus alone raises Qwen3-VL-4B-Instruct from 27.27 to 84.92 on
+            HumanPhys but degrades general spatial benchmarks relative to the untouched base model
+            (45.78 vs. 64.01 on BLINK; 40.77 vs. 54.74 on VSI-Bench). Adding the complementary corpora recovers
+            most of that gap: the joint mixture reaches 86.40 on HumanPhys and reduces the BLINK gap from 18.23
+            to 4.53. HumanPhys supervision is highly effective for the target capability but too narrow on its
+            own to preserve broad spatial reasoning.
+        </p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑩ 案例研究 —— 一道被真实打分的 CP-Room 题
+
+     ※ 目前只保留这张图。原来的交互答题组件(选项卡 + 题目 + 判分按钮)
+       已暂时移除;CSS(.quiz-* / .tabs / .tab-button)和
+       JS(QUIZ_ITEMS / initQuiz)都原样留着,以后要加回来只需恢复这段 HTML。
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="casestudy-section">
+    <div class="container">
+        <h2>Case Study</h2>
+        <div class="image-container">
+            <img src="assets/images/demo-casestudy.png" alt="One scored CP-Room question" class="full-width-image">
+        </div>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑪ 结论
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="conclusion-section">
+    <div class="container">
+        <h2>Conclusion</h2>
+        <p>
+            We introduced HumanPhys, a human-centric evaluation suite and training corpus for physical perception
+            from images and videos, spanning 13 sub-tasks with labels derived programmatically from source
+            metadata or renderer state. Our experiments show that these capabilities remain challenging for
+            current MLLMs, while training on HumanPhys substantially improves held-out performance and benefits
+            from being combined with complementary spatial data. More broadly, HumanPhys provides a structured
+            setting for studying how multimodal models perceive people as physical entities rather than only as
+            semantic subjects. We hope it will support future work on more robust evaluation and on active,
+            tool-augmented physical reasoning.
+        </p>
+    </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ⑫ 页脚
+     ═══════════════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+    <div class="container">
+        <p>
+            HumanPhys is built entirely by secondary use of publicly released research datasets
+            (JRDB, DanceTrack, UCSD Ped, VideoAttentionTarget, EyeBlink8, DECAF) and of synthetic assets
+            (FLAME / MANO / SMPL-X bodies, BEDLAM identities, ReplicaCAD scenes). No new human-subjects data
+            was collected. The release inherits upstream non-commercial research licences and ships with
+            regeneration scripts so that asset bytes never change hands.
+        </p>
+        <p class="footer-copy">© 2027 HumanPhys Authors. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="script.js?v=20261013-151541"></script>
+</body>
+</html>
