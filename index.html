@@ -6,14 +6,14 @@
 
 <title>HumanPhys: A Human-Centric Physical-World Perception Benchmark for Real-World Visual Reasoning</title>
 
-<meta name="description" content="HumanPhys is a human-centric benchmark and training corpus for real-world physical perception, spanning 13 sub-tasks over six dimensions: spatial state, kinematics, event, deformation, illumination and camera pose.">
+<meta name="description" content="HumanPhys is a human-centric diagnostic benchmark suite and training corpus for real-world physical perception of people, spanning 13 sub-tasks across six dimensions: spatial state, kinematics, events, deformation, illumination and camera ego-motion.">
 
 <!-- 图标库:外网 CDN。内网离线时图标不显示,文字与版面不受影响 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
 
 <link rel="icon" href="assets/images/favicon.svg">
-<link rel="stylesheet" href="style.css?v=20261014-142451">
+<link rel="stylesheet" href="style.css?v=20261125-112100">
 </head>
 <body>
 
@@ -83,15 +83,16 @@
 <section class="logo-section">
     <div class="container">
         <div class="image-container">
-            <img src="assets/images/hero-radar.png" alt="HumanPhys radar and checkpoint ablation" class="full-width-image">
+            <img src="assets/images/hero-radar.png" alt="HumanPhys radar and data-mixture ablation" class="full-width-image">
         </div>
         <p class="figure-caption">
-            <strong>Left:</strong> radar of the eight MLLMs on HumanPhys, with one axis for each sub-task,
-            grouped into the six taxonomy categories of the overview figure; the two proprietary models are dashed
-            (numerical scores in the leaderboard below).
-            <strong>Right:</strong> checkpoint ablation of fine-tuning on HumanPhys and complementary spatial data
-            across ten benchmarks, with Qwen3-VL-4B-Instruct dashed as reference.
-        </p>
+            <strong>Left:</strong> zero-shot performance radar of eight of the twelve evaluated MLLMs
+            across the 13 sub-tasks &mdash; the closed-source GPT-6-Sol (bold red dashes), the two locally
+            served base models (solid), and the five hosted-API models (dash-dot); the four
+            spatial-intelligence fine-tunes are tabulated in the leaderboard below only, for legibility.
+            <strong>Right:</strong> data-mixture ablation with Qwen3.5-4B across ten benchmarks
+            (tabulated and discussed in the Analysis section).
+        
     </div>
 </section>
 
@@ -103,23 +104,21 @@
     <div class="container">
         <h2>Abstract</h2>
         <p>
-            We introduce HumanPhys, a human-centric benchmark for real-world physical perception, and a
-            training corpus emitted by the same pipeline. Each question targets a physically grounded
-            quantity related to people, including depth, inter-person distance, gaze angle, displacement,
-            velocity, heading-step trajectory, blink count, and contact-deformation strength. The rendered
-            probes additionally test illumination inference from body and face cues and camera ego-motion,
-            both with and without a person in the frame. All labels are derived programmatically from sensor
-            calibration, source metadata, or renderer state, rather than written by annotators or produced by
-            estimators on the benchmark frames. HumanPhys systematically probes six dimensions of
-            human-centric physical perception: spatial state, kinematics, blink events, deformation,
-            illumination, and camera pose. To the best of our knowledge, no existing MLLM
-            benchmark-and-training corpus jointly supervises this set of human-centered physical quantities
-            under direct metadata- or renderer-derived labels. The six dimensions appear only partially
-            dissociable across the tested MLLMs. We benchmark a range of open- and closed-source MLLMs on
-            HumanPhys and find that all six capability dimensions remain challenging for current models. We
-            hope HumanPhys will support future research on multimodal systems that perceive and reason about
-            people in the physical world.
-        </p>
+            Can Multimodal Large Language Models (MLLMs) perceive humans as physical entities, rather
+            than merely semantic categories? We study this question with HumanPhys, a diagnostic benchmark
+            suite and training corpus organized around person-anchored physical measurability. HumanPhys
+            spans 13 sub-tasks across six complementary dimensions &mdash; spatial state, kinematics,
+            events, deformation, illumination, and camera ego-motion &mdash; over real-world videos and
+            synthetic sequences; each task asks for a measurable physical quantity or discrete event, and a
+            paired human-free control isolates camera ego-motion. Answer labels are programmatically derived
+            from sensor calibration, source metadata, or renderer state, with task-specific noise sources
+            explicitly disclosed, rather than manually guessed from benchmark frames; the two exceptions
+            where an upstream fit contributes are disclosed per sub-task (<em>Trajectory</em>&rsquo;s triage
+            classifier, <em>Deform</em>&rsquo;s DECAF anchor). We benchmark a broad set of open- and
+            closed-source MLLMs and show that the six dimensions are only partially dissociable and that all
+            remain challenging. Beyond evaluation, we show that HumanPhys labels and deterministic scorers
+            support supervised training, reward-based optimization, and tool-assisted inference.
+        
     </div>
 </section>
 
@@ -135,18 +134,21 @@
         </div>
         <p class="figure-caption">
             <strong>Overview of the HumanPhys taxonomy.</strong> Six dimensions, thirteen sub-tasks.
-            The separation is not a topic list but an operational decomposition of the role the body plays:
-            a <em>rigid target</em> localized in the world frame (spatial state, kinematics); a
-            <em>non-rigid, living target</em> showing transient events and contact response (blink, deformation);
-            a <em>photometric probe</em> whose shading reveals a hidden light source (illumination); and a
-            <em>reference for the observer</em> when ego-motion is measured with a person in frame (camera pose).
-        </p>
+            People are decomposed into measurable physical roles rather than being listed as topics: a
+            <em>Rigid Mobile Entity</em>, positioned in and moved through metric space (spatial state,
+            kinematics); an <em>Active Spatial Projector</em>, whose gaze links the head to an external
+            fixation target as a directional geometric vector; a <em>Non-Rigid Biomechanical Body</em>,
+            exhibiting contact deformation and transient events such as eye blinking; a
+            <em>Photometric Reflector</em>, whose shading reveals a hidden light source (illumination); and
+            an <em>Ego-Motion Anchor</em>, when observer ego-motion is measured with a person in frame
+            (camera pose).
+        
 
         <div class="stat-strip">
             <div class="stat"><span class="stat-num">13</span><span class="stat-label">sub-tasks</span></div>
             <div class="stat"><span class="stat-num">8</span><span class="stat-label">data sources</span></div>
             <div class="stat"><span class="stat-num">2,500</span><span class="stat-label">eval questions</span></div>
-            <div class="stat"><span class="stat-num">385,702</span><span class="stat-label">training pool</span></div>
+            <div class="stat"><span class="stat-num">376,582</span><span class="stat-label">training pool</span></div>
             <div class="stat"><span class="stat-num">6</span><span class="stat-label">dimensions</span></div>
         </div>
     </div>
@@ -161,13 +163,15 @@
     <div class="container">
         <h2 class="leaderboard-title">Leaderboard</h2>
         <p class="description">
-            Click on column headers to sort. Scores of eight MLLMs on the 13 sub-tasks, grouped by the six
-            taxonomy dimensions. <strong>Overall</strong> is the question-weighted composite
-            &sum;<sub>k</sub> n<sub>k</sub>s&#772;<sub>k</sub> / 2500 over the full item bank
-            (n<sub>k</sub>=200; 100 for <em>Deform</em>), scoring an unparseable answer 0 and keeping it in the
-            denominator. The 13 sub-task columns average only parseable answers, so they are diagnostic rather
-            than additive. Abbreviations: Dist = Distance, Disp = Displacement, Traj = Trajectory,
-            LS = light-shadow, CP = camera-pose.
+            Click on column headers to sort. Zero-shot scores of twelve MLLMs on the 13 sub-tasks, grouped by the
+            six taxonomy dimensions. Each row carries its serving group: <strong>closed</strong> = proprietary,
+            <strong>open</strong> = locally served open-weights base model, <strong>sft</strong> = a
+            Qwen2.5-VL-7B fine-tune for spatial intelligence, <strong>api</strong> = an open-weights checkpoint
+            queried through a hosted API endpoint under the same prompts and scoring protocol.
+            <strong>Overall</strong> is the question-weighted average over all 2,500 items, scoring an unparseable
+            output 0 and keeping it in the denominator; every column counts unparseable outputs as 0.
+            Abbreviations: Dist = Distance, Disp = Displacement, Traj = Trajectory, LS = Light-Shadow,
+            CP = Camera-Pose.
         </p>
 
         <table id="leaderboard">
@@ -203,60 +207,90 @@
                 <!-- ── Closed-source ── -->
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GPT-5.6-Sol</a><span class="model-tag tag-closed">closed</span></td>
-                    <td>46.94</td><td>37.15</td><td>29.90</td><td>70.05</td><td>79.35</td>
-                    <td>20.35</td><td>40.50</td><td>64.72</td><td>87.95</td><td>46.00</td>
-                    <td>27.51</td><td>57.48</td><td>30.55</td><td>18.15</td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GPT-6-Sol</a><span class="model-tag tag-closed">closed</span></td>
+                    <td>50.31</td><td>33.00</td><td>43.15</td><td>78.25</td><td>66.60</td>
+                    <td>23.50</td><td>21.65</td><td>58.75</td><td>82.60</td><td>45.00</td>
+                    <td>44.60</td><td>68.31</td><td>43.20</td><td>42.75</td>
+                </tr>
+                <!-- ── Open-source base models ── -->
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Qwen3.5-4B</a><span class="model-tag tag-open">open</span></td>
+                    <td>26.68</td><td>26.45</td><td>24.15</td><td>58.00</td><td>12.30</td>
+                    <td>2.70</td><td>11.95</td><td>65.10</td><td>32.55</td><td>25.00</td>
+                    <td>23.44</td><td>51.29</td><td>8.43</td><td>4.64</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Gemini-3.5-Flash</a><span class="model-tag tag-closed">closed</span></td>
-                    <td>45.61</td><td>32.90</td><td>38.05</td><td>69.60</td><td>77.05</td>
-                    <td>21.15</td><td>38.85</td><td>65.28</td><td>71.60</td><td>47.00</td>
-                    <td>30.39</td><td>60.39</td><td>27.36</td><td>13.91</td>
+                    <td class="model-name"><a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct" target="_blank" rel="noopener">Qwen2.5-VL-7B</a><span class="model-tag tag-open">open</span></td>
+                    <td>18.90</td><td>19.50</td><td>21.10</td><td>26.40</td><td>31.50</td>
+                    <td>2.30</td><td>4.95</td><td>3.53</td><td>24.80</td><td>32.00</td>
+                    <td>24.13</td><td>50.08</td><td>6.13</td><td>5.83</td>
                 </tr>
-                <!-- ── Open-source ── -->
+                <!-- ── Open-source fine-tunes for spatial intelligence (Qwen2.5-VL-7B) ── -->
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="https://huggingface.co/Qwen/Qwen3-VL-4B-Instruct" target="_blank" rel="noopener">Qwen3-VL-4B-Instruct</a><span class="model-tag tag-open">open</span></td>
-                    <td>27.27</td><td>29.00</td><td>38.05</td><td>36.65</td><td>14.50</td>
-                    <td>17.40</td><td>24.95</td><td>63.48</td><td>30.85</td><td>38.00</td>
-                    <td>24.82</td><td>54.62</td><td>5.36</td><td>2.43</td>
-                </tr>
-                <tr>
-                    <td class="rank-col"></td>
-                    <td class="model-name"><a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct" target="_blank" rel="noopener">Qwen2.5-VL-7B-Instruct</a><span class="model-tag tag-open">open</span></td>
-                    <td>19.74</td><td>29.25</td><td>17.40</td><td>28.80</td><td>13.50</td>
-                    <td>8.40</td><td>16.15</td><td>58.29</td><td>25.20</td><td>27.00</td>
-                    <td>23.94</td><td>52.48</td><td>6.44</td><td>2.56</td>
+                    <td class="model-name"><a href="https://arxiv.org/abs/2506.09965" target="_blank" rel="noopener">ViLaSR</a><span class="model-tag tag-sft">sft</span></td>
+                    <td>25.99</td><td>5.00</td><td>6.35</td><td>47.25</td><td>4.60</td>
+                    <td>23.40</td><td>53.50</td><td>66.51</td><td>27.80</td><td>28.00</td>
+                    <td>16.03</td><td>47.52</td><td>6.37</td><td>6.58</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="https://arxiv.org/abs/2504.01805" target="_blank" rel="noopener">SpaceR</a><span class="model-tag tag-open">open</span></td>
-                    <td>26.14</td><td>30.90</td><td>25.95</td><td>26.15</td><td>3.50</td>
-                    <td>15.85</td><td>33.40</td><td>67.07</td><td>26.85</td><td>24.00</td>
-                    <td>23.78</td><td>51.54</td><td>8.44</td><td>1.68</td>
+                    <td class="model-name"><a href="https://arxiv.org/abs/2504.01805" target="_blank" rel="noopener">SpaceR</a><span class="model-tag tag-sft">sft</span></td>
+                    <td>25.01</td><td>23.70</td><td>15.95</td><td>22.25</td><td>27.00</td>
+                    <td>8.45</td><td>16.00</td><td>66.11</td><td>28.20</td><td>26.00</td>
+                    <td>25.17</td><td>50.17</td><td>6.69</td><td>9.87</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">SpatialEvo</a><span class="model-tag tag-open">open</span></td>
-                    <td>25.21</td><td>32.10</td><td>29.85</td><td>35.70</td><td>7.45</td>
-                    <td>28.30</td><td>25.90</td><td>67.85</td><td>5.30</td><td>23.00</td>
-                    <td>20.27</td><td>50.07</td><td>5.60</td><td>2.86</td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">SpatialEvo</a><span class="model-tag tag-sft">sft</span></td>
+                    <td>21.71</td><td>11.70</td><td>13.55</td><td>34.20</td><td>3.90</td>
+                    <td>21.35</td><td>24.40</td><td>67.16</td><td>4.10</td><td>25.00</td>
+                    <td>21.31</td><td>44.11</td><td>7.38</td><td>5.67</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Spatial-SSRL-7B</a><span class="model-tag tag-open">open</span></td>
-                    <td>20.43</td><td>20.55</td><td>20.30</td><td>32.20</td><td>34.30</td>
-                    <td>1.40</td><td>7.60</td><td>55.14</td><td>34.65</td><td>29.00</td>
-                    <td>26.20</td><td>53.97</td><td>9.17</td><td>2.57</td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Spatial-SSRL-7B</a><span class="model-tag tag-sft">sft</span></td>
+                    <td>19.76</td><td>20.95</td><td>17.25</td><td>29.45</td><td>25.50</td>
+                    <td>0.00</td><td>3.40</td><td>5.76</td><td>36.85</td><td>28.00</td>
+                    <td>27.38</td><td>51.75</td><td>8.26</td><td>6.48</td>
+                </tr>
+                <!-- ── Open-source models via hosted API ── -->
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Kimi-K3</a><span class="model-tag tag-api">api</span></td>
+                    <td>38.38</td><td>37.20</td><td>20.20</td><td>59.10</td><td>54.10</td>
+                    <td>26.70</td><td>35.70</td><td>61.26</td><td>49.85</td><td>36.00</td>
+                    <td>28.12</td><td>53.33</td><td>20.04</td><td>16.21</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">ViLaSR</a><span class="model-tag tag-open">open</span></td>
-                    <td>27.75</td><td>23.45</td><td>27.15</td><td>38.45</td><td>7.05</td>
-                    <td>22.00</td><td>50.55</td><td>66.51</td><td>27.55</td><td>21.00</td>
-                    <td>15.97</td><td>48.58</td><td>6.95</td><td>3.20</td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Qwen3.8-Flash-Next</a><span class="model-tag tag-api">api</span></td>
+                    <td>34.53</td><td>41.30</td><td>24.60</td><td>50.60</td><td>53.50</td>
+                    <td>9.80</td><td>9.70</td><td>49.40</td><td>66.85</td><td>27.00</td>
+                    <td>19.69</td><td>46.47</td><td>25.28</td><td>20.89</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Ling-3.0-Flash-VL</a><span class="model-tag tag-api">api</span></td>
+                    <td>30.41</td><td>35.00</td><td>25.80</td><td>62.60</td><td>28.20</td>
+                    <td>3.80</td><td>1.00</td><td>54.54</td><td>57.50</td><td>18.00</td>
+                    <td>27.49</td><td>51.59</td><td>12.57</td><td>11.03</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">MiniMax-M3</a><span class="model-tag tag-api">api</span></td>
+                    <td>28.85</td><td>31.75</td><td>13.75</td><td>47.70</td><td>30.10</td>
+                    <td>9.25</td><td>12.05</td><td>55.58</td><td>37.70</td><td>21.00</td>
+                    <td>28.93</td><td>53.35</td><td>18.61</td><td>11.39</td>
+                </tr>
+                <tr>
+                    <td class="rank-col"></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GLM-5.3-Flash</a><span class="model-tag tag-api">api</span></td>
+                    <td>25.55</td><td>32.65</td><td>12.45</td><td>43.15</td><td>61.70</td>
+                    <td>5.85</td><td>15.50</td><td>40.75</td><td>75.35</td><td>27.00</td>
+                    <td>3.56</td><td>2.81</td><td>7.15</td><td>4.99</td>
                 </tr>
             </tbody>
         </table>
@@ -285,29 +319,30 @@
             <tbody>
                 <tr>
                     <td class="model-name">Random</td>
-                    <td>18.60</td><td>7.20</td><td>8.30</td><td>23.40</td><td>28.20</td>
-                    <td>5.80</td><td>12.20</td><td>37.80</td><td>22.00</td><td>26.20</td>
-                    <td>13.40</td><td>48.10</td><td>6.10</td><td>2.80</td>
+                    <td>17.74</td><td>17.13</td><td>9.69</td><td>22.15</td><td>13.62</td>
+                    <td>4.31</td><td>5.06</td><td>24.27</td><td>18.70</td><td>24.28</td>
+                    <td>27.08</td><td>53.47</td><td>8.80</td><td>5.29</td>
                 </tr>
                 <tr>
                     <td class="model-name">Text Only</td>
-                    <td>18.03</td><td>20.60</td><td>24.00</td><td>0.00</td><td>32.55</td>
-                    <td>0.00</td><td>14.80</td><td>54.03</td><td>0.00</td><td>28.00</td>
-                    <td>24.58</td><td>54.19</td><td>4.62</td><td>2.32</td>
+                    <td>10.18</td><td>10.35</td><td>1.70</td><td>0.00</td><td>0.00</td>
+                    <td>0.00</td><td>0.00</td><td>18.20</td><td>0.00</td><td>23.00</td>
+                    <td>20.86</td><td>52.35</td><td>8.61</td><td>3.73</td>
                 </tr>
                 <tr>
                     <td class="model-name">Human <span class="model-tag tag-human">indicative</span></td>
-                    <td>48.30</td><td>25.20</td><td>52.00</td><td>79.20</td><td>60.40</td>
-                    <td>36.50</td><td>30.30</td><td>63.50</td><td>87.40</td><td>36.10</td>
-                    <td>50.60</td><td>70.10</td><td>24.90</td><td>12.20</td>
+                    <td>52.48</td><td>46.38</td><td>33.75</td><td>79.47</td><td>58.00</td>
+                    <td>37.31</td><td>32.35</td><td>60.42</td><td>77.88</td><td>36.00</td>
+                    <td>52.97</td><td>70.07</td><td>50.46</td><td>39.29</td>
                 </tr>
             </tbody>
         </table>
         <p class="table-note">
-            <em>Human</em> is indicative only: ten colleagues each answered an availability-selected,
-            non-uniform &asymp;40% subset, so we draw no statistical conclusion from it.
-            <em>Random</em> is a uniform random baseline over the full question bank; <em>Text Only</em> answers
-            from the question text alone, without any visual input.
+            <em>Human</em> pools the 647 voluntary reference responses from a ten-volunteer panel that the scorer
+            could evaluate (question-weighting its columns would give 52.51); the panel takes a median of
+            91.8&nbsp;s per <em>CP-Human</em> question, so no statistical conclusion is drawn from it.
+            <em>Random</em> averages 50 blind-guess seeds over training priors; <em>Text Only</em> queries
+            Qwen3.5-4B without visual input.
         </p>
     </div>
 </section>
@@ -524,8 +559,10 @@
                         <span class="name">Trajectory</span>
                         <p class="def">Sequence of heading changes and step lengths as
                             (<em>turn_deg</em>, <em>distance_m</em>) tuples, with the first step anchored at 0&deg; and
-                            positive turn meaning left. Curved paths are kept by a random forest that triages every
-                            candidate trajectory into straight / curved / abandon.</p>
+                            positive turn meaning left. Curved paths are kept by a lightweight classifier that
+                            triages every candidate trajectory as straight, curved or unsuitable, so that
+                            low-quality tracks never become questions; its residual error is a disclosed
+                            component of the <em>Trajectory</em> gold noise.</p>
                         <p class="ex">&ldquo;Summarize the walking trajectory, including turns made and distances moved.&rdquo;</p>
                     </div>
                 </div>
@@ -583,16 +620,18 @@
                         <span class="name">CP-Room</span>
                         <p class="def">A free-flying camera performs a random walk on a collision-checked cubic lattice
                             (0.20&nbsp;m step) through 84 baked indoor stages. Every frame transition is exactly one
-                            <em>atomic action</em>: a translation along &plusmn;X/&plusmn;Y/&plusmn;Z by 1&ndash;3 steps,
-                            or an in-place yaw/pitch/roll rotation of &plusmn;1&deg;&ndash;&plusmn;30&deg;. This is the
-                            human-free control condition.</p>
+                            <em>atomic action</em>: a translation of exactly one
+                            0.20&nbsp;m lattice step along &plusmn;X/&plusmn;Y/&plusmn;Z, or an in-place
+                            yaw/pitch/roll rotation of &plusmn;1&deg;&ndash;&plusmn;30&deg;. This is the
+                            human-free control condition, and its scorer grades translation direction only.</p>
                     </div>
                     <div class="taskdef-item">
                         <span class="name">CP-Human</span>
-                        <p class="def">Identical scene family, lattice step, action grammar and scorer, but plants an
-                            SMPL-X human and samples paths that keep the face framed. The CP-Human/CP-Room gap is
-                            therefore a <em>controlled comparison</em> for the effect of human presence on ego-motion
-                            recovery.</p>
+                        <p class="def">Identical scene family, 0.20&nbsp;m lattice step and
+                            nine-token action grammar, but plants an SMPL-X human, samples paths that keep
+                            the face framed, and grades translations of 1&ndash;3 steps including their
+                            magnitude. The CP-Human/CP-Room gap is therefore a <em>controlled comparison</em>
+                            for the effect of human presence on ego-motion recovery.</p>
                         <p class="ex">&ldquo;Predict the sequence of camera actions for every subsequent frame.&rdquo;</p>
                     </div>
                 </div>
@@ -618,7 +657,7 @@
             <figure class="figure-panel">
                 <img src="assets/images/statistic.png" alt="Task distribution of the HumanPhys training corpus" class="full-width-image">
                 <figcaption>
-                    <strong>Training corpus distribution.</strong> About 386K samples; distance-related
+                    <strong>Training corpus distribution.</strong> About 377K samples; distance-related
                     tasks dominate, with long-tail categories such as Count, Gaze, Trajectory and Deformation.
                 </figcaption>
             </figure>
@@ -647,47 +686,74 @@
         <h2>Analysis</h2>
         <p>
             Where do models actually fail? The 13 sub-task columns show that the six dimensions are only
-            <em>partially dissociable</em>: across the eight models kinematics and illumination correlate at
-            <em>r</em> = &minus;0.18 and spatial state and kinematics at <em>r</em> = 0.35 (mean off-diagonal
-            <em>r</em> = 0.64), and rankings reverse between dimensions. An aggregate score would hide these
-            differences, so we diagnose the largest single failure mode directly.
+            <em>partially dissociable</em>: rankings reverse sharply across measurement targets. SpatialEvo and
+            ViLaSR exceed GPT-6-Sol on <em>Trajectory</em> (67.16 and 66.51 vs. 58.75), yet SpatialEvo collapses to
+            3.90 on <em>Gaze</em> and 4.10 on <em>Blink</em> and ViLaSR reaches only 4.60 on <em>Gaze</em>, while
+            GPT-6-Sol leads both. The five hosted-API models reach 25.55&ndash;38.38 overall &mdash;
+            11.93&ndash;24.76 points below GPT-6-Sol &mdash; with profiles as uneven as the fine-tunes&#8217;. The
+            difficulty is not confined to MLLMs: the human reference panel takes a median of 91.8&nbsp;s per
+            <em>CP-Human</em> question yet reaches only 39.29. An aggregate score would hide these complementary
+            failures, so we diagnose the largest single failure mode directly.
         </p>
 
         <div class="image-container">
-            <img src="assets/images/diagnosis.png" alt="Diagnosis of CP-Room errors for Gemini-3.5-Flash" class="full-width-image">
+            <img src="assets/images/diagnosis.png" alt="Diagnosis of CP-Room errors for GPT-6-Sol" class="full-width-image">
         </div>
         <p class="figure-caption">
-            <strong>Diagnosis of CP-Room errors (Gemini-3.5-Flash, n = 200).</strong>
+            <strong>Diagnosis of CP-Room errors (GPT-6-Sol, n = 200).</strong>
             <strong>Left:</strong> per-step gold-vs-predicted axis confusion.
-            <strong>Right:</strong> score-loss waterfall from a perfect mean step-MRA of 1.0 to the actual 0.274.
+            <strong>Right:</strong> score-loss waterfall from a perfect mean per-step score of 1.0 to the actual
+            0.432.
         </p>
 
         <h3>1. Motion type, not magnitude, is the main obstacle</h3>
         <p>
-            Rotational axes are recovered far more reliably than translational ones (diagonal confusion
-            77%, 64% and 61% for roll, pitch and yaw), while translational motions are frequently confused with
-            rotations &mdash; gold <em>+X</em> is predicted as <em>yaw</em> in 28% of steps. The waterfall
-            attributes 69% of the total loss to choosing the wrong axis or motion type, 22% to sign errors, and
-            only 9% to magnitude errors.
+            Rotational-axis recovery varies sharply across axes (per-axis diagonal hit rates 57%, 55% and 34% for
+            roll, pitch and yaw), while translational motions are frequently confused with rotations or other
+            directions &mdash; gold <em>&minus;Z</em> steps are predicted as <em>pitch</em> in 25% of steps. The
+            score breakdown attributes 92.2% of the total loss to choosing the wrong axis or motion type, 5.6% to
+            sign errors and only 2.2% to magnitude errors. The paired conditions also show that a human anchor is
+            not uniformly helpful: GPT-6-Sol drops from 43.20 on <em>CP-Room</em> to 42.75 on <em>CP-Human</em> and
+            Qwen3.5-4B from 8.43 to 4.64, whereas SpaceR rises from 6.69 to 9.87 &mdash; axis and motion-type
+            confusion persists regardless of human presence.
         </p>
 
         <h3>2. Existing spatial corpora transfer only weakly</h3>
         <p>
             The four checkpoints released for object- and scene-centric spatial reasoning reach
-            20.43&ndash;27.75 overall, 19&ndash;27 points below GPT-5.6-Sol. Human-physical perception is
+            19.76&ndash;25.99 overall, 24.32&ndash;30.55 points below GPT-6-Sol. Human-physical perception is
             therefore at best weakly induced by existing spatial corpora, which motivates the HumanPhys training
             pool and the use of SpaceR-151K and SpatialCorpus-331K as complements rather than substitutes.
         </p>
 
         <h3>3. Specialisation costs breadth unless data is mixed</h3>
         <p>
-            Supervised training on the HumanPhys corpus alone raises Qwen3-VL-4B-Instruct from 27.27 to 84.92 on
-            HumanPhys but degrades general spatial benchmarks relative to the untouched base model
-            (45.78 vs. 64.01 on BLINK; 40.77 vs. 54.74 on VSI-Bench). Adding the complementary corpora recovers
-            most of that gap: the joint mixture reaches 86.40 on HumanPhys and reduces the BLINK gap from 18.23
-            to 4.53. HumanPhys supervision is highly effective for the target capability but too narrow on its
-            own to preserve broad spatial reasoning.
+            Supervised training on the HumanPhys corpus alone (SFT&nbsp;&#9312;) raises Qwen3.5-4B from 26.68 to
+            74.14 on HumanPhys but degrades some object- and scene-centric benchmarks (3DSRBench 62.09 &rarr;
+            50.01, ViewSpatial 43.63 &rarr; 36.87), while MMSI-Bench improves from 26.30 to 29.50. Mixing
+            SpaceR-151K yields the strongest HumanPhys checkpoint (75.41) and recovers ViewSpatial to 44.47; the
+            full three-corpus mixture keeps most of the gain (74.21) while lifting MMSI-Bench to 32.00, MMStar to
+            63.52 and MMBench to 86.25. HumanPhys supervision is therefore highly effective for the target
+            capability but too narrow on its own to preserve broad spatial reasoning.
         </p>
+
+        <h3>4. The scorer itself is a reward signal</h3>
+        <p>
+            Starting from Qwen3.5-4B, RLVR with GRPO uses the same deterministic HumanPhys scorer as its reward.
+            Over roughly 200 training steps the reward rises consistently and the checkpoint improves the overall
+            composite from 26.68 to 39.58 (+12.90): the metric is not only an evaluator but also an effective
+            learning signal, without any human-annotated preference.
+        </p>
+
+        <h3>5. Calibrated tools close part of the gap at inference time</h3>
+        <p>
+            Letting GPT-6-Sol invoke a calculator, a pinhole camera model (official JRDB intrinsics) and VGGT on
+            1,050 paired questions raises the mean reward from 41.2 to 56.6 (+15.4), with the largest gain on
+            <em>CP-Room</em> (+32.9, 42.3 &rarr; 75.2) and positive gains on all seven tool-supported sub-tasks.
+            The same teacher trajectories distil into a 4B policy through an SFT cold start plus a tool-aware
+            RLVR stage, yielding a small model that invokes these tools itself.
+        </p>
+
     </div>
 </section>
 
@@ -705,6 +771,14 @@
         <div class="image-container">
             <img src="assets/images/demo-casestudy.png" alt="One scored CP-Room question" class="full-width-image">
         </div>
+        <p class="figure-caption">
+            <strong>One scored <em>CP-Room</em> QA.</strong> The two-step prediction is
+            <code>[[-Z, 0.20], [roll, -25]]</code> against gold <code>[["-Z", 0.2], ["roll", -24]]</code>.
+            Step&nbsp;1 matches the gold translation axis (&minus;Z) with an exact magnitude (0.20 vs.
+            0.2&nbsp;m) for 1.0; Step&nbsp;2&#8217;s roll has circular angular error 1&deg; (&minus;25&deg; vs.
+            &minus;24&deg;), below all five angular thresholds (5&deg;&ndash;45&deg;), for 1.0; the sequence
+            score averages over gold steps: (1.0&nbsp;+&nbsp;1.0)&nbsp;/&nbsp;2&nbsp;=&nbsp;1.0.
+        </p>
     </div>
 </section>
 
@@ -716,14 +790,13 @@
     <div class="container">
         <h2>Conclusion</h2>
         <p>
-            We introduced HumanPhys, a human-centric evaluation suite and training corpus for physical perception
-            from images and videos, spanning 13 sub-tasks with labels derived programmatically from source
-            metadata or renderer state. Our experiments show that these capabilities remain challenging for
-            current MLLMs, while training on HumanPhys substantially improves held-out performance and benefits
-            from being combined with complementary spatial data. More broadly, HumanPhys provides a structured
-            setting for studying how multimodal models perceive people as physical entities rather than only as
-            semantic subjects. We hope it will support future work on more robust evaluation and on active,
-            tool-augmented physical reasoning.
+            HumanPhys is a 13-task human-centric benchmark and training resource for deterministic
+            human-physical perception evaluation and optimization. Its programmatically derived labels and
+            bounded scorers make evaluation reproducible and support utility validation through SFT,
+            metric-guided RL, and tool-assisted reasoning. Across these settings, current models still
+            struggle with human-physical geometry, while targeted HumanPhys supervision and complementary
+            geometric tools provide measurable improvements. We hope it will support future work on more
+            robust evaluation and on active, tool-augmented physical reasoning.
         </p>
     </div>
 </section>
@@ -738,13 +811,15 @@
             HumanPhys is built entirely by secondary use of publicly released research datasets
             (JRDB, DanceTrack, UCSD Ped, VideoAttentionTarget, EyeBlink8, DECAF) and of synthetic assets
             (FLAME / MANO / SMPL-X bodies, BEDLAM identities, ReplicaCAD scenes). No new human-subjects data
-            was collected. The release inherits upstream non-commercial research licences and ships with
+            was collected; the human-reference panel behind the <em>Human</em> row consisted of ten adult
+            volunteers affiliated with our institution who participated voluntarily and without
+            compensation, producing 647 valid responses. The release inherits upstream non-commercial research licences and ships with
             regeneration scripts so that asset bytes never change hands.
         </p>
         <p class="footer-copy">© 2027 HumanPhys Authors. All rights reserved.</p>
     </div>
 </footer>
 
-<script src="script.js?v=20261013-151541"></script>
+<script src="script.js?v=20261125-112100"></script>
 </body>
 </html>

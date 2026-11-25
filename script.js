@@ -11,7 +11,7 @@
  * ★ Case Study 题库
  *   全部数据取自论文原文与 Demo 图(Figure 5),非杜撰:
  *     gold      = [["yaw", -27], ["+X", 0.2]]
- *     predicted = [["yaw", -30], ["+X", 0.2]]      (Gemini-3.5-Flash)
+ *     predicted = [["yaw", -30], ["+X", 0.2]]      (GPT-6-Sol)
  *     Step1 共享轴向但幅度不同 -> 通过 10 个 MRA 阈值中的 8 个 -> 0.8
  *     Step2 完全一致                                      -> 1.0
  *     序列分 = (0.8 + 1.0) / 2 = 0.9
@@ -40,7 +40,7 @@ const QUIZ_ITEMS = [
     {
         tabLabel : 'Step 1',
         tabIcon  : 'fas fa-rotate',
-        question : 'Step&nbsp;1 of the gold answer is <code>["yaw", -27]</code>; Gemini-3.5-Flash predicted <code>["yaw", -30]</code>. The axis is right but the magnitude differs. Under the scorer\'s MRA threshold set <em>C&nbsp;=&nbsp;{0.50,&nbsp;0.55,&nbsp;&hellip;,&nbsp;0.95}</em>, how much credit does this step earn?',
+        question : 'Step&nbsp;1 of the gold answer is <code>["yaw", -27]</code>; GPT-6-Sol predicted <code>["yaw", -30]</code>. The axis is right but the magnitude differs. Under the scorer\'s MRA threshold set <em>C&nbsp;=&nbsp;{0.50,&nbsp;0.55,&nbsp;&hellip;,&nbsp;0.95}</em>, how much credit does this step earn?',
         options  : ['0 / 10 = 0.0', '5 / 10 = 0.5', '8 / 10 = 0.8', '10 / 10 = 1.0'],
         correct  : 2,
         explanation: '<code>|&#375;&nbsp;&minus;&nbsp;y| / |y| = |30&nbsp;&minus;&nbsp;27| / 27 &asymp; 0.111</code>. A threshold &theta; is passed when that relative error is below <code>1&nbsp;&minus;&nbsp;&theta;</code>, i.e. when &theta;&nbsp;&lt;&nbsp;0.889 &mdash; satisfied by the eight thresholds up to 0.85, giving <strong>8/10 = 0.8</strong>. That is the partial credit the MRA rule is designed to grant.'
@@ -51,7 +51,7 @@ const QUIZ_ITEMS = [
         question : 'Step&nbsp;2 is <code>["+X", 0.2]</code> in both gold and prediction &mdash; an exact match, worth 1.0. The sequence score averages over the gold step count: <em>(step&nbsp;1 + step&nbsp;2) / 2</em>. What is the final score?',
         options  : ['0.80', '0.85', '0.90', '1.00'],
         correct  : 2,
-        explanation: '<code>(0.8 + 1.0) / 2 = <strong>0.9</strong></code>. Note what this means for the benchmark: a model that gets the <em>motion type</em> right but the magnitude wrong still keeps 80% of the credit on that step &mdash; which is exactly why the paper\'s diagnosis attributes 69% of the loss on CP-Room to wrong axis / motion type and only 9% to magnitude.'
+        explanation: '<code>(0.8 + 1.0) / 2 = <strong>0.9</strong></code>. Note what this means for the benchmark: a model that gets the <em>motion type</em> right but the magnitude wrong still keeps 80% of the credit on that step &mdash; which is exactly why the paper\'s diagnosis attributes 92.2% of the loss on CP-Room to wrong axis / motion type and only 2.2% to magnitude.'
     }
 ];
 

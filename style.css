@@ -872,6 +872,8 @@ p {
 
 .tag-closed { background: #e6efff; color: #1a56c4; }
 .tag-open   { background: #e4f5e9; color: #1a7f37; }
+.tag-sft    { background: #fff3e0; color: #a05a00; }
+.tag-api    { background: #f1e8ff; color: #6d3fc0; }
 .tag-human  { background: #fdf1d8; color: #97690a; }
 
 /* ── 概览统计条 ───────────────────────────────────────────────────────── */
