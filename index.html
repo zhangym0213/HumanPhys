@@ -83,15 +83,15 @@
 <section class="logo-section">
     <div class="container">
         <div class="image-container">
-            <img src="assets/images/hero-radar.png?v=20261125-140500" alt="HumanPhys radar and data-mixture ablation" class="full-width-image">
+            <img src="assets/images/pipeline.png?v=20261125-174500" alt="HumanPhys construction pipeline" class="full-width-image">
         </div>
         <p class="figure-caption">
-            <strong>Left:</strong> zero-shot performance radar of eight of the twelve evaluated MLLMs
-            across the 13 sub-tasks &mdash; the closed-source GPT-6-Sol (bold red dashes), the two locally
-            served base models (solid), and the five hosted-API models (dash-dot); the four
-            spatial-intelligence fine-tunes are tabulated in the leaderboard below only, for legibility.
-            <strong>Right:</strong> data-mixture ablation with Qwen3.5-4B across ten benchmarks
-            (tabulated and discussed in the Analysis section).
+            <strong>Construction pipeline.</strong> Four stages turn open datasets and Blender-configured
+            synthetic scenes into a curated corpus: data collection, preprocessing, multi-engine QA
+            generation, and manual review. Every answer label is derived from sensor calibration, source
+            metadata or renderer state &mdash; review never alters a ground-truth value
+            (details in the Construction Pipeline section below).
+        </p>
         
     </div>
 </section>
@@ -164,10 +164,9 @@
         <h2 class="leaderboard-title">Leaderboard</h2>
         <p class="description">
             Click on column headers to sort. Zero-shot scores of twelve MLLMs on the 13 sub-tasks, grouped by the
-            six taxonomy dimensions. Each row carries its serving group: <strong>closed</strong> = proprietary,
-            <strong>open</strong> = locally served open-weights base model, <strong>sft</strong> = a
-            Qwen2.5-VL-7B fine-tune for spatial intelligence, <strong>api</strong> = an open-weights checkpoint
-            queried through a hosted API endpoint under the same prompts and scoring protocol.
+            six taxonomy dimensions. Each row carries up to two tags: <strong>closed</strong> / <strong>open</strong> = weights
+            availability (proprietary vs. open-weights), and <strong>api</strong> = queried through a
+            hosted API endpoint under the same prompts and scoring protocol instead of served locally.
             <strong>Overall</strong> is the question-weighted average over all 2,500 items, scoring an unparseable
             output 0 and keeping it in the denominator; every column counts unparseable outputs as 0.
             Abbreviations: Dist = Distance, Disp = Displacement, Traj = Trajectory, LS = Light-Shadow,
@@ -207,7 +206,7 @@
                 <!-- ── Closed-source ── -->
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GPT-6-Sol</a><span class="model-tag tag-closed">closed</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GPT-6-Sol</a><span class="model-tag tag-closed">closed</span><span class="model-tag tag-api">api</span></td>
                     <td>50.31</td><td>33.00</td><td>43.15</td><td>78.25</td><td>66.60</td>
                     <td>23.50</td><td>21.65</td><td>58.75</td><td>82.60</td><td>45.00</td>
                     <td>44.60</td><td>68.31</td><td>43.20</td><td>42.75</td>
@@ -230,28 +229,28 @@
                 <!-- ── Open-source fine-tunes for spatial intelligence (Qwen2.5-VL-7B) ── -->
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="https://arxiv.org/abs/2506.09965" target="_blank" rel="noopener">ViLaSR</a><span class="model-tag tag-sft">sft</span></td>
+                    <td class="model-name"><a href="https://arxiv.org/abs/2506.09965" target="_blank" rel="noopener">ViLaSR</a><span class="model-tag tag-open">open</span></td>
                     <td>25.99</td><td>5.00</td><td>6.35</td><td>47.25</td><td>4.60</td>
                     <td>23.40</td><td>53.50</td><td>66.51</td><td>27.80</td><td>28.00</td>
                     <td>16.03</td><td>47.52</td><td>6.37</td><td>6.58</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="https://arxiv.org/abs/2504.01805" target="_blank" rel="noopener">SpaceR</a><span class="model-tag tag-sft">sft</span></td>
+                    <td class="model-name"><a href="https://arxiv.org/abs/2504.01805" target="_blank" rel="noopener">SpaceR</a><span class="model-tag tag-open">open</span></td>
                     <td>25.01</td><td>23.70</td><td>15.95</td><td>22.25</td><td>27.00</td>
                     <td>8.45</td><td>16.00</td><td>66.11</td><td>28.20</td><td>26.00</td>
                     <td>25.17</td><td>50.17</td><td>6.69</td><td>9.87</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">SpatialEvo</a><span class="model-tag tag-sft">sft</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">SpatialEvo</a><span class="model-tag tag-open">open</span></td>
                     <td>21.71</td><td>11.70</td><td>13.55</td><td>34.20</td><td>3.90</td>
                     <td>21.35</td><td>24.40</td><td>67.16</td><td>4.10</td><td>25.00</td>
                     <td>21.31</td><td>44.11</td><td>7.38</td><td>5.67</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Spatial-SSRL-7B</a><span class="model-tag tag-sft">sft</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Spatial-SSRL-7B</a><span class="model-tag tag-open">open</span></td>
                     <td>19.76</td><td>20.95</td><td>17.25</td><td>29.45</td><td>25.50</td>
                     <td>0.00</td><td>3.40</td><td>5.76</td><td>36.85</td><td>28.00</td>
                     <td>27.38</td><td>51.75</td><td>8.26</td><td>6.48</td>
@@ -259,35 +258,35 @@
                 <!-- ── Open-source models via hosted API ── -->
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Kimi-K3</a><span class="model-tag tag-api">api</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Kimi-K3</a><span class="model-tag tag-open">open</span><span class="model-tag tag-api">api</span></td>
                     <td>38.38</td><td>37.20</td><td>20.20</td><td>59.10</td><td>54.10</td>
                     <td>26.70</td><td>35.70</td><td>61.26</td><td>49.85</td><td>36.00</td>
                     <td>28.12</td><td>53.33</td><td>20.04</td><td>16.21</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Qwen3.8-Flash-Next</a><span class="model-tag tag-api">api</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Qwen3.8-Flash-Next</a><span class="model-tag tag-open">open</span><span class="model-tag tag-api">api</span></td>
                     <td>34.53</td><td>41.30</td><td>24.60</td><td>50.60</td><td>53.50</td>
                     <td>9.80</td><td>9.70</td><td>49.40</td><td>66.85</td><td>27.00</td>
                     <td>19.69</td><td>46.47</td><td>25.28</td><td>20.89</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Ling-3.0-Flash-VL</a><span class="model-tag tag-api">api</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">Ling-3.0-Flash-VL</a><span class="model-tag tag-open">open</span><span class="model-tag tag-api">api</span></td>
                     <td>30.41</td><td>35.00</td><td>25.80</td><td>62.60</td><td>28.20</td>
                     <td>3.80</td><td>1.00</td><td>54.54</td><td>57.50</td><td>18.00</td>
                     <td>27.49</td><td>51.59</td><td>12.57</td><td>11.03</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">MiniMax-M3</a><span class="model-tag tag-api">api</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">MiniMax-M3</a><span class="model-tag tag-open">open</span><span class="model-tag tag-api">api</span></td>
                     <td>28.85</td><td>31.75</td><td>13.75</td><td>47.70</td><td>30.10</td>
                     <td>9.25</td><td>12.05</td><td>55.58</td><td>37.70</td><td>21.00</td>
                     <td>28.93</td><td>53.35</td><td>18.61</td><td>11.39</td>
                 </tr>
                 <tr>
                     <td class="rank-col"></td>
-                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GLM-5.3-Flash</a><span class="model-tag tag-api">api</span></td>
+                    <td class="model-name"><a href="#" target="_blank" rel="noopener">GLM-5.3-Flash</a><span class="model-tag tag-open">open</span><span class="model-tag tag-api">api</span></td>
                     <td>25.55</td><td>32.65</td><td>12.45</td><td>43.15</td><td>61.70</td>
                     <td>5.85</td><td>15.50</td><td>40.75</td><td>75.35</td><td>27.00</td>
                     <td>3.56</td><td>2.81</td><td>7.15</td><td>4.99</td>
@@ -652,7 +651,15 @@
         <!-- 两张图并排:左 = 流程图,右 = 训练语料分布圆环图 -->
         <div class="figure-row">
             <figure class="figure-panel">
-                <img src="assets/images/pipeline.png?v=20261125-140500" alt="HumanPhys construction pipeline" class="full-width-image">
+                <img src="assets/images/hero-radar.png?v=20261125-174500" alt="HumanPhys radar and data-mixture ablation" class="full-width-image">
+                <figcaption>
+                    <strong>Zero-shot radar.</strong> <strong>Left:</strong> eight of the twelve evaluated
+                    MLLMs across the 13 sub-tasks &mdash; GPT-6-Sol (bold red dashes), the two locally served
+                    base models (solid) and the five hosted-API models (dash-dot); the four
+                    spatial-intelligence fine-tunes are tabulated in the leaderboard only, for legibility.
+                    <strong>Right:</strong> data-mixture ablation with Qwen3.5-4B across ten benchmarks
+                    (discussed in the Analysis section).
+                </figcaption>
             </figure>
             <figure class="figure-panel">
                 <img src="assets/images/statistic.png?v=20261125-140500" alt="Task distribution of the HumanPhys training corpus" class="full-width-image">
@@ -687,13 +694,10 @@
         <p>
             Where do models actually fail? The 13 sub-task columns show that the six dimensions are only
             <em>partially dissociable</em>: rankings reverse sharply across measurement targets. SpatialEvo and
-            ViLaSR exceed GPT-6-Sol on <em>Trajectory</em> (67.16 and 66.51 vs. 58.75), yet SpatialEvo collapses to
-            3.90 on <em>Gaze</em> and 4.10 on <em>Blink</em> and ViLaSR reaches only 4.60 on <em>Gaze</em>, while
-            GPT-6-Sol leads both. The five hosted-API models reach 25.55&ndash;38.38 overall &mdash;
-            11.93&ndash;24.76 points below GPT-6-Sol &mdash; with profiles as uneven as the fine-tunes&#8217;. The
-            difficulty is not confined to MLLMs: the human reference panel takes a median of 91.8&nbsp;s per
-            <em>CP-Human</em> question yet reaches only 39.29. An aggregate score would hide these complementary
-            failures, so we diagnose the largest single failure mode directly.
+            ViLaSR exceed GPT-6-Sol on <em>Trajectory</em> (67.16 and 66.51 vs. 58.75) yet collapse to single
+            digits on <em>Gaze</em> and <em>Blink</em>, where GPT-6-Sol leads; the hosted-API models and even the
+            human reference panel (39.29 on <em>CP-Human</em>) show profiles as uneven. An aggregate score would
+            hide these complementary failures, so we diagnose the largest single failure mode directly.
         </p>
 
         <div class="image-container">
@@ -708,50 +712,30 @@
 
         <h3>1. Motion type, not magnitude, is the main obstacle</h3>
         <p>
-            Rotational-axis recovery varies sharply across axes (per-axis diagonal hit rates 57%, 55% and 34% for
-            roll, pitch and yaw), while translational motions are frequently confused with rotations or other
-            directions &mdash; gold <em>&minus;Z</em> steps are predicted as <em>pitch</em> in 25% of steps. The
-            score breakdown attributes 92.2% of the total loss to choosing the wrong axis or motion type, 5.6% to
-            sign errors and only 2.2% to magnitude errors. The paired conditions also show that a human anchor is
-            not uniformly helpful: GPT-6-Sol drops from 43.20 on <em>CP-Room</em> to 42.75 on <em>CP-Human</em> and
-            Qwen3.5-4B from 8.43 to 4.64, whereas SpaceR rises from 6.69 to 9.87 &mdash; axis and motion-type
-            confusion persists regardless of human presence.
+            Axis recovery varies sharply (diagonal hit rates 57%, 55%, 34% for roll, pitch, yaw) and
+            translational steps are frequently confused with rotations &mdash; gold <em>&minus;Z</em> steps are
+            predicted as <em>pitch</em> in 25% of steps. The score breakdown attributes 92.2% of the total loss to
+            the wrong axis or motion type, 5.6% to sign errors and only 2.2% to magnitude; the paired
+            <em>CP-Human</em> condition shows the same confusion with or without a human anchor.
         </p>
 
-        <h3>2. Existing spatial corpora transfer only weakly</h3>
+        <h3>2. Specialisation costs breadth unless data is mixed</h3>
         <p>
-            The four checkpoints released for object- and scene-centric spatial reasoning reach
-            19.76&ndash;25.99 overall, 24.32&ndash;30.55 points below GPT-6-Sol. Human-physical perception is
-            therefore at best weakly induced by existing spatial corpora, which motivates the HumanPhys training
-            pool and the use of SpaceR-151K and SpatialCorpus-331K as complements rather than substitutes.
+            SFT on the HumanPhys corpus alone raises Qwen3.5-4B from 26.68 to 74.14 on HumanPhys but degrades
+            object- and scene-centric benchmarks (3DSRBench 62.09 &rarr; 50.01, ViewSpatial 43.63 &rarr; 36.87).
+            Mixing SpaceR-151K gives the strongest HumanPhys checkpoint (75.41) and recovers ViewSpatial; the
+            full three-corpus mixture keeps most of the gain (74.21) while lifting MMSI-Bench, MMStar and MMBench.
+            Conversely, the four released spatial-reasoning checkpoints transfer only weakly
+            (19.76&ndash;25.99 overall), so existing corpora complement rather than substitute HumanPhys.
         </p>
 
-        <h3>3. Specialisation costs breadth unless data is mixed</h3>
+        <h3>3. The scorer is also a reward signal, and tools close part of the gap</h3>
         <p>
-            Supervised training on the HumanPhys corpus alone (SFT&nbsp;&#9312;) raises Qwen3.5-4B from 26.68 to
-            74.14 on HumanPhys but degrades some object- and scene-centric benchmarks (3DSRBench 62.09 &rarr;
-            50.01, ViewSpatial 43.63 &rarr; 36.87), while MMSI-Bench improves from 26.30 to 29.50. Mixing
-            SpaceR-151K yields the strongest HumanPhys checkpoint (75.41) and recovers ViewSpatial to 44.47; the
-            full three-corpus mixture keeps most of the gain (74.21) while lifting MMSI-Bench to 32.00, MMStar to
-            63.52 and MMBench to 86.25. HumanPhys supervision is therefore highly effective for the target
-            capability but too narrow on its own to preserve broad spatial reasoning.
-        </p>
-
-        <h3>4. The scorer itself is a reward signal</h3>
-        <p>
-            Starting from Qwen3.5-4B, RLVR with GRPO uses the same deterministic HumanPhys scorer as its reward.
-            Over roughly 200 training steps the reward rises consistently and the checkpoint improves the overall
-            composite from 26.68 to 39.58 (+12.90): the metric is not only an evaluator but also an effective
-            learning signal, without any human-annotated preference.
-        </p>
-
-        <h3>5. Calibrated tools close part of the gap at inference time</h3>
-        <p>
-            Letting GPT-6-Sol invoke a calculator, a pinhole camera model (official JRDB intrinsics) and VGGT on
-            1,050 paired questions raises the mean reward from 41.2 to 56.6 (+15.4), with the largest gain on
-            <em>CP-Room</em> (+32.9, 42.3 &rarr; 75.2) and positive gains on all seven tool-supported sub-tasks.
-            The same teacher trajectories distil into a 4B policy through an SFT cold start plus a tool-aware
-            RLVR stage, yielding a small model that invokes these tools itself.
+            RLVR with GRPO using the same deterministic scorer as reward lifts Qwen3.5-4B from 26.68 to 39.58
+            (+12.90) in ~200 steps, with no human preference labels. At inference time, letting GPT-6-Sol invoke
+            a calculator, a pinhole camera model and VGGT on 1,050 paired questions raises mean reward from 41.2
+            to 56.6 (+15.4), largest on <em>CP-Room</em> (+32.9); the same trajectories distil into a tool-using
+            4B policy via SFT cold start plus tool-aware RLVR.
         </p>
 
     </div>
