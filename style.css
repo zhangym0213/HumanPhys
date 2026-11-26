@@ -1224,7 +1224,8 @@ p {
     padding: 40px 0 56px;
 }
 
-.examples-section .section-lead {
+.examples-section .section-lead,
+.taxonomy-section .section-lead {
     font-family: var(--font-sans);
     font-size: 1.02em;
     color: #55606f;

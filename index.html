@@ -138,23 +138,205 @@
 <!-- ════════════════════════════════════════════════════════════════════════
      ④ Figure 2 — taxonomy overview
      ═══════════════════════════════════════════════════════════════════════ -->
-<section class="taxonomy-section">
+<section class="taxonomy-section" id="examples">
     <div class="container">
-        <h2>Overview</h2>
-        <div class="image-container">
-            <img src="assets/images/hero-radar.png?v=20261126-214500" alt="HumanPhys radar and data-mixture ablation" class="full-width-image">
-        </div>
-        <p class="figure-caption">
-            <strong>Zero-shot radar.</strong> <strong>Left:</strong> eight of the twelve evaluated
-                    MLLMs across the 13 sub-tasks &mdash; GPT-6-Sol (bold red dashes), the two locally served
-                    base models (solid) and the five hosted-API models (dash-dot); the four
-                    spatial-intelligence fine-tunes are tabulated in the leaderboard only, for legibility.
-                    <strong>Right:</strong> data-mixture ablation with Qwen3.5-4B across ten benchmarks
-                    (discussed in the Analysis section).
+        <h2>Examples</h2>
+        <p class="section-lead">
+            One qualitative example per illustrated sub-task. Animated stimuli loop in place;
+            answers are the benchmark gold labels.
         </p>
+        <div class="examples-grid">
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-depth.jpg?v=20261126-220500" alt="Depth example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g1">Depth</span>
+                    <p class="example-q"><strong>Q:</strong> What is the depth of pedestrian 23?</p>
+                    <p class="example-a"><strong>A:</strong> 3.1 m</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-velocity.gif?v=20261126-220500" alt="Velocity example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g1">Velocity</span>
+                    <p class="example-q"><strong>Q:</strong> What is the walking speed of pedestrian 8?</p>
+                    <p class="example-a"><strong>A:</strong> 0.6 m/s</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-trajectory.gif?v=20261126-220500" alt="Trajectory example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g1">Trajectory</span>
+                    <p class="example-q"><strong>Q:</strong> Predict the trajectory of pedestrian 27.</p>
+                    <p class="example-a"><strong>A:</strong> Forward 0.5 m, turn left 8.9&deg;, then forward 0.6 m</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-count.gif?v=20261126-220500" alt="Count example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g1">Count</span>
+                    <p class="example-q"><strong>Q:</strong> What is the maximum number of people inside the ROI at any point in the video?</p>
+                    <p class="example-a"><strong>A:</strong> 16</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-deform.gif?v=20261126-220500" alt="Deform example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g2">Deform</span>
+                    <p class="example-q"><strong>Q:</strong> Which deformation is most physically plausible?</p>
+                    <p class="example-a"><strong>A:</strong> B</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-lshead.gif?v=20261126-220500" alt="LS-Head example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g2">LS-Head</span>
+                    <p class="example-q"><strong>Q:</strong> The light source starts at (0, 1, 0). Predict its position in each remaining frame.</p>
+                    <p class="example-a"><strong>A:</strong> (&minus;1, 1, 0), (&minus;1, 1, 1), (0, 1, 1), (0, 1, 2)</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-cphuman.gif?v=20261126-220500" alt="CP-Human example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g2">CP-Human</span>
+                    <p class="example-q"><strong>Q:</strong> Predict the camera motion.</p>
+                    <p class="example-a"><strong>A:</strong> Turn right 21&deg;, pitch down 14&deg;</p>
+                </figcaption>
+            </figure>
+            <figure class="example-card">
+                <img src="assets/images/examples/ex-cproom.gif?v=20261126-220500" alt="CP-Room example" loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="example-tag g2">CP-Room</span>
+                    <p class="example-q"><strong>Q:</strong> Predict the camera motion.</p>
+                    <p class="example-a"><strong>A:</strong> Pitch down 30&deg;, turn right 26&deg;</p>
+                </figcaption>
+            </figure>
+        </div>
     </div>
 </section>
 
+
+<section class="comparison-section">
+    <div class="container">
+        <h2>Comparison</h2>
+        <!-- ★ 屏幕自适应关键:
+             ① table-layout:fixed 让列宽完全由下面 <colgroup> 的百分比决定,内容再长也撑不破
+             ② <wbr> 给长单词标出「可以在这里换行」的位置,窄屏时才不会出现半个词溢出  -->
+        <table class="compare-table">
+            <colgroup>
+                <col class="c-bench">
+                <col class="c-hc">
+                <col class="c-flag"><col class="c-flag"><col class="c-flag">
+                <col class="c-flag"><col class="c-flag"><col class="c-flag">
+                <col class="c-train">
+            </colgroup>
+            <thead>
+                <!-- 每个长表头都有「完整版 / 窄屏缩写版」两份,由 CSS 按屏宽切换,
+                     避免手机上把 IMAGE 这类词硬断成 "IMAG E" -->
+                <tr>
+                    <th rowspan="2"><span class="lbl-full">Bench<wbr>mark</span><span class="lbl-short">Bench</span></th>
+                    <th rowspan="2"><span class="lbl-full">Human-<br>Centric</span><span class="lbl-short">Human<br>Cent.</span></th>
+                    <th colspan="2"><span class="lbl-full">Input Type</span><span class="lbl-short">Input</span></th>
+                    <th colspan="2">Source</th>
+                    <th colspan="2"><span class="lbl-full">Task <wbr>Taxonomy</span><span class="lbl-short">Task<br>Taxon.</span></th>
+                    <th rowspan="2"><span class="lbl-full">Train<br>Data<br>Ava.</span><span class="lbl-short">Train<br>Data</span></th>
+                </tr>
+                <tr>
+                    <th><span class="lbl-full">Image</span><span class="lbl-short">Img</span></th>
+                    <th><span class="lbl-full">Video</span><span class="lbl-short">Vid</span></th>
+                    <th>Real</th>
+                    <th><span class="lbl-full">Simu<wbr>lation</span><span class="lbl-short">Sim</span></th>
+                    <th><span class="lbl-full">Static</span><span class="lbl-short">Stat</span></th>
+                    <th><span class="lbl-full">Dyna<wbr>mic</span><span class="lbl-short">Dyn</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="bench-name">VSI-Bench</td>
+                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">STI-Bench</td>
+                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">3DSRBench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">BLINK</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">ViewSpatial</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">SPARBench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">MMSI-Bench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">WMABench</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">SpaceR</td>
+                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">SpatialScore</td>
+                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td>
+                </tr>
+                <tr>
+                    <td class="bench-name">HumanMoveVQA</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
+                    <td class="yes">&check;</td><td class="no">&times;</td><td class="no">&times;</td>
+                    <td class="yes">&check;</td><td class="yes">&check;</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td class="bench-name"><strong>HumanPhys</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="figure-caption">
+            <strong>Human-Centric:</strong> humans are the targets of perception.
+            <strong>Input Type:</strong> accepted modalities; “Video” means temporally ordered sampled frames
+            derived from source clips. <strong>Source:</strong> provenance of the visual data.
+            <strong>Task Taxonomy:</strong> static or dynamic queried target.
+            <strong>Train Data Ava.:</strong> whether a training corpus is released.
+            For HumanMoveVQA all questions are video-level multiple choice about human motion, so Static is
+            marked &times;, and <em>Train Data Ava.</em> denotes the authors' own training split rather than a
+            separately released corpus.
+        </p>
+    </div>
+</section>
 
 <!-- ════════════════════════════════════════════════════════════════════════
      ⑤ 排行榜 — 主结果表(13 子任务 × 8 模型)
@@ -295,6 +477,18 @@
             </tbody>
         </table>
 
+        <div class="image-container">
+            <img src="assets/images/hero-radar.png?v=20261126-214500" alt="HumanPhys radar and data-mixture ablation" class="full-width-image">
+        </div>
+        <p class="figure-caption">
+            <strong>Zero-shot radar.</strong> <strong>Left:</strong> eight of the twelve evaluated
+                    MLLMs across the 13 sub-tasks &mdash; GPT-6-Sol (bold red dashes), the two locally served
+                    base models (solid) and the five hosted-API models (dash-dot); the four
+                    spatial-intelligence fine-tunes are tabulated in the leaderboard only, for legibility.
+                    <strong>Right:</strong> data-mixture ablation with Qwen3.5-4B across ten benchmarks
+                    (discussed in the Analysis section).
+        </p>
+
         <h3 class="sub-table-title">Reference baselines</h3>
         <table class="baseline-table">
             <thead>
@@ -351,129 +545,6 @@
 <!-- ════════════════════════════════════════════════════════════════════════
      ⑥ 对比 — benchmark comparison
      ═══════════════════════════════════════════════════════════════════════ -->
-<section class="comparison-section">
-    <div class="container">
-        <h2>Comparison</h2>
-        <!-- ★ 屏幕自适应关键:
-             ① table-layout:fixed 让列宽完全由下面 <colgroup> 的百分比决定,内容再长也撑不破
-             ② <wbr> 给长单词标出「可以在这里换行」的位置,窄屏时才不会出现半个词溢出  -->
-        <table class="compare-table">
-            <colgroup>
-                <col class="c-bench">
-                <col class="c-hc">
-                <col class="c-flag"><col class="c-flag"><col class="c-flag">
-                <col class="c-flag"><col class="c-flag"><col class="c-flag">
-                <col class="c-train">
-            </colgroup>
-            <thead>
-                <!-- 每个长表头都有「完整版 / 窄屏缩写版」两份,由 CSS 按屏宽切换,
-                     避免手机上把 IMAGE 这类词硬断成 "IMAG E" -->
-                <tr>
-                    <th rowspan="2"><span class="lbl-full">Bench<wbr>mark</span><span class="lbl-short">Bench</span></th>
-                    <th rowspan="2"><span class="lbl-full">Human-<br>Centric</span><span class="lbl-short">Human<br>Cent.</span></th>
-                    <th colspan="2"><span class="lbl-full">Input Type</span><span class="lbl-short">Input</span></th>
-                    <th colspan="2">Source</th>
-                    <th colspan="2"><span class="lbl-full">Task <wbr>Taxonomy</span><span class="lbl-short">Task<br>Taxon.</span></th>
-                    <th rowspan="2"><span class="lbl-full">Train<br>Data<br>Ava.</span><span class="lbl-short">Train<br>Data</span></th>
-                </tr>
-                <tr>
-                    <th><span class="lbl-full">Image</span><span class="lbl-short">Img</span></th>
-                    <th><span class="lbl-full">Video</span><span class="lbl-short">Vid</span></th>
-                    <th>Real</th>
-                    <th><span class="lbl-full">Simu<wbr>lation</span><span class="lbl-short">Sim</span></th>
-                    <th><span class="lbl-full">Static</span><span class="lbl-short">Stat</span></th>
-                    <th><span class="lbl-full">Dyna<wbr>mic</span><span class="lbl-short">Dyn</span></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="bench-name">VSI-Bench</td>
-                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">STI-Bench</td>
-                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">3DSRBench</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
-                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">BLINK</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
-                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">ViewSpatial</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">SPARBench</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">MMSI-Bench</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="no">&times;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">WMABench</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">SpaceR</td>
-                    <td class="no">&times;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">SpatialScore</td>
-                    <td class="no">&times;</td><td class="yes">&check;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="yes">&check;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="yes">&check;</td>
-                </tr>
-                <tr>
-                    <td class="bench-name">HumanMoveVQA</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="yes">&check;</td>
-                    <td class="yes">&check;</td><td class="no">&times;</td><td class="no">&times;</td>
-                    <td class="yes">&check;</td><td class="yes">&check;</td>
-                </tr>
-                <tr class="highlight-row">
-                    <td class="bench-name"><strong>HumanPhys</strong></td>
-                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
-                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
-                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
-                    <td class="yes"><strong>&check;</strong></td><td class="yes"><strong>&check;</strong></td>
-                </tr>
-            </tbody>
-        </table>
-        <p class="figure-caption">
-            <strong>Human-Centric:</strong> humans are the targets of perception.
-            <strong>Input Type:</strong> accepted modalities; “Video” means temporally ordered sampled frames
-            derived from source clips. <strong>Source:</strong> provenance of the visual data.
-            <strong>Task Taxonomy:</strong> static or dynamic queried target.
-            <strong>Train Data Ava.:</strong> whether a training corpus is released.
-            For HumanMoveVQA all questions are video-level multiple choice about human motion, so Static is
-            marked &times;, and <em>Train Data Ava.</em> denotes the authors' own training split rather than a
-            separately released corpus.
-        </p>
-    </div>
-</section>
-
 
 <!-- ════════════════════════════════════════════════════════════════════════
      ⑦ 任务定义 —— 方案 B:左侧粘性目录 + 右侧内容
@@ -642,84 +713,7 @@
 </section>
 
 
-<!-- ════════════════════════════════════════════════════════════════════════
-     ⑦b 示例 — 每个图示子任务一条 QA(动图原地循环)
-     ═══════════════════════════════════════════════════════════════════════ -->
-<section class="examples-section" id="examples">
-    <div class="container">
-        <h2>Examples</h2>
-        <p class="section-lead">
-            One qualitative example per illustrated sub-task. Animated stimuli loop in place;
-            answers are the benchmark gold labels.
-        </p>
-        <div class="examples-grid">
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-depth.jpg?v=20261126-220500" alt="Depth example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g1">Depth</span>
-                    <p class="example-q"><strong>Q:</strong> What is the depth of pedestrian 23?</p>
-                    <p class="example-a"><strong>A:</strong> 3.1 m</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-velocity.gif?v=20261126-220500" alt="Velocity example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g1">Velocity</span>
-                    <p class="example-q"><strong>Q:</strong> What is the walking speed of pedestrian 8?</p>
-                    <p class="example-a"><strong>A:</strong> 0.6 m/s</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-trajectory.gif?v=20261126-220500" alt="Trajectory example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g1">Trajectory</span>
-                    <p class="example-q"><strong>Q:</strong> Predict the trajectory of pedestrian 27.</p>
-                    <p class="example-a"><strong>A:</strong> Forward 0.5 m, turn left 8.9&deg;, then forward 0.6 m</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-count.gif?v=20261126-220500" alt="Count example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g1">Count</span>
-                    <p class="example-q"><strong>Q:</strong> What is the maximum number of people inside the ROI at any point in the video?</p>
-                    <p class="example-a"><strong>A:</strong> 16</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-deform.gif?v=20261126-220500" alt="Deform example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g2">Deform</span>
-                    <p class="example-q"><strong>Q:</strong> Which deformation is most physically plausible?</p>
-                    <p class="example-a"><strong>A:</strong> B</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-lshead.gif?v=20261126-220500" alt="LS-Head example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g2">LS-Head</span>
-                    <p class="example-q"><strong>Q:</strong> The light source starts at (0, 1, 0). Predict its position in each remaining frame.</p>
-                    <p class="example-a"><strong>A:</strong> (&minus;1, 1, 0), (&minus;1, 1, 1), (0, 1, 1), (0, 1, 2)</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-cphuman.gif?v=20261126-220500" alt="CP-Human example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g2">CP-Human</span>
-                    <p class="example-q"><strong>Q:</strong> Predict the camera motion.</p>
-                    <p class="example-a"><strong>A:</strong> Turn right 21&deg;, pitch down 14&deg;</p>
-                </figcaption>
-            </figure>
-            <figure class="example-card">
-                <img src="assets/images/examples/ex-cproom.gif?v=20261126-220500" alt="CP-Room example" loading="lazy" decoding="async">
-                <figcaption>
-                    <span class="example-tag g2">CP-Room</span>
-                    <p class="example-q"><strong>Q:</strong> Predict the camera motion.</p>
-                    <p class="example-a"><strong>A:</strong> Pitch down 30&deg;, turn right 26&deg;</p>
-                </figcaption>
-            </figure>
-        </div>
-    </div>
-</section>
+
 
 
 <!-- ════════════════════════════════════════════════════════════════════════
