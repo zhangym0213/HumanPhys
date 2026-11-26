@@ -1279,7 +1279,7 @@ p {
 .example-tag.g2 { background: #e0803a; }
 
 .example-q { margin: 0 0 4px; color: var(--text); }
-.example-a { margin: 0; }
+.example-a { margin: 0; font-weight: 700; font-style: italic; }
 
 @media (max-width: 1000px) {
     .examples-grid { grid-template-columns: repeat(2, 1fr); }
